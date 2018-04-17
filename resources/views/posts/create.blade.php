@@ -1,0 +1,34 @@
+@extends('layouts.app') 
+
+@section('content')
+    <h2>Create ad</h2>
+    <form action="/edit" method="POST">
+        {{ csrf_field() }}
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" required> 
+            
+            @if ($errors->has('title'))
+                <span class="invalid-feedback">
+                    <strong>{{ $errors->first('title') }}</strong>
+                </span>
+            @endif
+        </div>
+
+        <div class="form-group">
+            <label for="body">Description</label>
+            <textarea name="body" id="body" class="form-control{{ $errors->has('body') ? ' is-invalid' : '' }}" cols="30" rows="10" required></textarea>
+
+            @if ($errors->has('body'))
+                <span class="invalid-feedback">
+                    <strong>{{ $errors->first('body') }}</strong>
+                </span>
+            @endif
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Create</button>
+        </div>
+    </form>
+@endsection
