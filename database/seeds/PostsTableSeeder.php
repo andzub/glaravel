@@ -16,15 +16,15 @@ class PostsTableSeeder extends Seeder
                 [
                     'title' => 'My post',
                     'body' => 'Some text',
-                    'user_id' => 1,
+                    'author_id' => 1,
                 ], [
                     'title' => 'Second post',
                     'body' => 'Some text',
-                    'user_id' => 1,
+                    'author_id' => 1,
                 ], [
                     'title' => 'Third post',
                     'body' => 'Some text',
-                    'user_id' => 2,
+                    'author_id' => 2,
                 ],
             )
         );

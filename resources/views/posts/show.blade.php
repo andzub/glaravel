@@ -10,7 +10,7 @@
                 <p>{{ $post->body }}</p>
                 
                 <!-- if the session is equal to the user name, then display additional buttons to edit and delete -->
-                @if (session('name') == $post->author['name'])
+                @if (Auth::user()->id == $post->author['id'])
                     <p><a href="/edit/{{ $post->id }}" class="btn btn-warning">Edit</a></p>
                     <form action="/delete/{{ $post->id }}" method="POST">
                         {{ csrf_field() }}

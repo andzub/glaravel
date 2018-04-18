@@ -4,7 +4,7 @@
     <div class="row">
 
         <!-- if there is no session then display form -->
-        @if (!session('name'))
+        @if (!Auth::check())
             <div class="col-md-12">
                 <div class="card" style="margin-bottom:20px">
                     <div class="card-header text-center"><h4>Login</h4></div>
@@ -50,17 +50,19 @@
         @endif
         
         <!-- Display the posts -->
-        @foreach($posts as $post)
-            <div class="col-md-6">
-                <div class="jumbotron">
-                    <h2><a href="/{{ $post->id }}">{{ $post->title }}</a></h2>
-                    <p>Author name: <strong>{{ $post->author['name'] }}</strong></p>
-                    <p>Creation date: <strong>{{ date('Y-m-d', strtotime($post->created_at)) }}</strong></p>
-                    <p>{{ $post->body }}</p>
-                    <p><a href="/{{ $post->id }}" class="btn btn-primary">Read more</a></p>
+        @if ($posts)
+            @foreach($posts as $post)
+                <div class="col-md-6">
+                    <div class="jumbotron">
+                        <h2><a href="/{{ $post->id }}">{{ $post->title }}</a></h2>
+                        <p>Author name: <strong>{{ $post->author['name'] }}</strong></p>
+                        <p>Creation date: <strong>{{ date('Y-m-d', strtotime($post->created_at)) }}</strong></p>
+                        <p>{{ $post->body }}</p>
+                        <p><a href="/{{ $post->id }}" class="btn btn-primary">Read more</a></p>
+                    </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+        @endif
     </div>
 
     <!-- Pagination 5 items -->

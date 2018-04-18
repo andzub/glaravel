@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Http\Controllers\Auth\Session;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -24,15 +25,6 @@ class RegisterController extends Controller
 
     use RegistersUsers;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
 
     /**
      * Create or login a new user instance after a valid registration.
@@ -47,16 +39,14 @@ class RegisterController extends Controller
             'password' => 'required|string|min:5',
         ]);
 
-        // check of user if name and password equal, then login 
+        // Check of user if name and password equal, then login
         $results = User::where('name', request('name'))->get();
         foreach($results as $result) {
 
-            if ($result['name'] == request('name') && 
+            if ($result['name'] == request('name') &&
                 Hash::check(request('password'), $result['password'])) {
-                session()->put('name', request('name'));
-
+                Auth::login($result);
                 return redirect('/');
-                
             } else {
                 $this->validate(request(), [
                     'name' => 'required|string|max:255|unique:users',
@@ -64,12 +54,12 @@ class RegisterController extends Controller
             }
         }
 
-        User::create([
+        $user = User::create([
             'name' => request('name'),
             'password' => Hash::make(request('password')),
-        ]); 
-        session()->put('name', request('name'));
+        ]);
 
+        Auth::login($user);
         return redirect('/');
     }
 
@@ -80,8 +70,8 @@ class RegisterController extends Controller
      */
     public function logout()
     {
-        session()->forget('name');
 
+        Auth::logout();
         return redirect('/');
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -40,24 +41,24 @@ class PostController extends Controller
     {
         // Check input data
         $this->validate(request(), [
-            'title' => 'required',
+            'title' => 'required|max:255',
             'body' => 'required',
         ]);
-        
+
         // Get user id
-        $results = User::where('name', session('name'))->get();
-        foreach($results as $result) {
-            $user_id = $result['id'];
-        }
-        
+//        $results = User::where('name', session('name'))->get();
+//        foreach($results as $result) {
+//            $author_id = $result['id'];
+//        }
+//
         // Create new ad
-        $data = Post::create([
+        $post = Post::create([
             'title' => request('title'),
             'body' => request('body'),
-            'author_id' => $user_id,
+            'author_id' => Auth::user()->id,
         ]);
 
-        return redirect('/'.$data['id']);
+        return redirect('/'.$post['id']);
     }
 
     /**
@@ -75,13 +76,24 @@ class PostController extends Controller
     {   
         // Check input data
         $this->validate(request(), [
-            'title' => 'required',
+            'title' => 'required|max:255',
             'body' => 'required',
         ]);
 
-        $post->update(request(['title', 'body', 'author_id']));
+        // Get user id
+//        $results = User::where('name', session('name'))->get();
+//        foreach($results as $result) {
+//            $author_id = $result['id'];
+//        }
 
-        return redirect('/');
+        // Check rights of user
+        if (Auth::user()->id == $post->author_id) {
+            $post->update(request(['title', 'body']));
+        } else {
+            return '<h2 style="color:red; text-align:center;">У вас нет достаточных прав!</h2>';
+        }
+
+        return redirect('/'.$post['id']);
     }
 
     /**
@@ -89,8 +101,19 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
-        
+        // Get user id
+//        $results = User::where('name', session('name'))->get();
+//        foreach($results as $result) {
+//            $author_id = $result['id'];
+//        }
+
+        // Check rights of user
+        if (Auth::user()->id == $post->author_id) {
+            $post->delete();
+        } else {
+            return '<h2 style="color:red; text-align:center;">У вас нет достаточных прав!</h2>';
+        }
+
         return redirect('/');
     }
 }
